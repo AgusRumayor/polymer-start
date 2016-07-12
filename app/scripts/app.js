@@ -22,7 +22,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     // set app.baseURL to '/your-pathname/' if running from folder in production
     // app.baseUrl = '/polymer-starter-kit/';
   }
-
+  app.toArray = function(obj){
+    return Object.keys(obj).map(function(key) {
+                return {
+                    name: key,
+                    value: obj[key]
+                };
+            });
+  }
   // Listen for template bound event to know when bindings
   // have resolved and content has been stamped to the page
   app.addEventListener('dom-change', function() {
