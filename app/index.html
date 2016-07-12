@@ -66,35 +66,54 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <template is="dom-bind" id="app">
     <iron-ajax auto
-		id="getBoards"
-    url="https://cimat.cloud.tyk.io/avl/board?authorization=578417c2054dc0000100006aadmin"
+		id="getLists"
+    url="https://cimat.cloud.tyk.io/avl/list/yGMy5ekJ?authorization=578417c2054dc0000100006aadmin"
 		method="GET"
 		content-type="application/json"
 		handle-as="json"
-		last-response="{{boards}}"></iron-ajax>
+		last-response="{{lists}}"></iron-ajax>
+		
+		<iron-ajax
+		id="getCards"
+    url="https://cimat.cloud.tyk.io/avl/card/yGMy5ekJ?authorization=578417c2054dc0000100006aadmin"
+		method="GET"
+		content-type="application/json"
+		on-response="updateCards"
+		handle-as="json"
+		last-response="{{cards}}"></iron-ajax>
+		
+		<iron-ajax
+		id="newOrder"
+    url="https://cimat.cloud.tyk.io/avl/order?authorization=578417c2054dc0000100006aadmin"
+		method="POST"
+		content-type="application/json"
+		handle-as="json"
+		last-response="{{ajaxResponse}}"></iron-ajax>
+		
     <paper-drawer-panel id="paperDrawerPanel">
       <!-- Drawer Scroll Header Panel -->
       <paper-scroll-header-panel drawer fixed>
 
         <!-- Drawer Toolbar -->
         <paper-toolbar id="drawerToolbar">
-          <span class="menu-name">Boards</span>
+          <span class="menu-name">Lists</span>
         </paper-toolbar>
 
         <!-- Drawer Content -->
-        <paper-menu class="app-menu" attr-for-selected="data-route" selected="[[route]]">
-          <a data-route="home" href="{{baseUrl}}">
+        <paper-menu class="app-menu">
+          <!-- <a data-route="home" href="{{baseUrl}}">
             <iron-icon icon="home"></iron-icon>
             <span>Home</span>
-          </a>
-          <template is="dom-repeat" items="{{toArray(boards)}}">
-            <a data-route="{{item.name}}" href="{{baseUrl}}{{item.name}}">
+          </a> -->
+          <template is="dom-repeat" items="{{toArray(lists)}}">
+            <!--<a onclick="{{listSelect(item.name)}}">
             <iron-icon icon="list"></iron-icon>
             <span>{{item.value}}</span>
-            </a>
-        </template>
+            </a>-->
+            <paper-item on-tap="listSelect" idlst$="[[item.name]]">{{item.value}}</paper-item>
+          </template>
 
-          <a data-route="users" href="{{baseUrl}}users">
+          <!--<a data-route="users" href="{{baseUrl}}users">
             <iron-icon icon="info"></iron-icon>
             <span>Users</span>
           </a>
@@ -102,7 +121,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <a data-route="contact" href="{{baseUrl}}contact">
             <iron-icon icon="mail"></iron-icon>
             <span>Contact</span>
-          </a>
+          </a>-->
         </paper-menu>
       </paper-scroll-header-panel>
 
@@ -115,8 +134,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <span class="space"></span>
 
           <!-- Toolbar icons -->
-          <paper-icon-button icon="refresh"></paper-icon-button>
-          <paper-icon-button icon="search"></paper-icon-button>
+          <!--<paper-icon-button icon="refresh"></paper-icon-button>
+          <paper-icon-button icon="search"></paper-icon-button>-->
 
           <!-- Application name -->
           <div class="middle middle-container">
@@ -134,12 +153,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <iron-pages attr-for-selected="data-route" selected="{{route}}">
             <section data-route="home" tabindex="-1">
               <paper-material elevation="1">
+                <template is="dom-if" if="[[!ajaxResponse.ordered]]">
+		              <paper-button on-tap="send" left="[[ajaxResponse.compare]]" right="[[ajaxResponse.item]]" token="[[ajaxResponse.token]]" raised>[[ajaxResponse.item]]</paper-button>
+		              <paper-button on-tap="send" left="[[ajaxResponse.item]]" right="[[ajaxResponse.compare]]" token="[[ajaxResponse.token]]" raised>[[ajaxResponse.compare]]</paper-button>
+	              </template>
+	              <template is="dom-if" if="[[ajaxResponse.ordered]]">
+              		<iron-ajax auto
+                  url="https://cimat.cloud.tyk.io/avl/order/[[ajaxResponse.token]]?authorization=578417c2054dc0000100006aadmin"
+              		method="GET"
+              		contentType="application/json"
+              		handle-as="json"
+              		last-response="{{getResponse}}"
+              		verbose="true"></iron-ajax>
+              		<template is="dom-repeat" items="[[getResponse.data]]">
+              			<paper-material elevation="2">{{item}}</paper-material>
+              		</template>
+              		<!--<iron-ajax auto
+                      	url="http://localhost:8000/upload/[[ajaxResponse.token]]"
+              		method="POST"
+              		contentType="application/json"
+              		handle-as="json"
+              		last-response="{{postResponse}}"
+              		verbose="true"></iron-ajax>-->
+              	</template>
                 <my-greeting></my-greeting>
-
-                <p class="subhead">You now have:</p>
-                <my-list></my-list>
-
-                <p>Looking for more Web App layouts? Check out our <a href="https://github.com/PolymerElements/app-layout-templates">layouts</a> collection. You can also <a href="http://polymerelements.github.io/app-layout-templates/">preview</a> them live.</p>
               </paper-material>
 
               <paper-material elevation="1">

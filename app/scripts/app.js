@@ -30,6 +30,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 };
             });
   }
+  
+  
   // Listen for template bound event to know when bindings
   // have resolved and content has been stamped to the page
   app.addEventListener('dom-change', function() {
@@ -77,5 +79,29 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   app.closeDrawer = function() {
     app.$.paperDrawerPanel.closeDrawer();
   };
-
+  
+  app.listSelect = function(e){
+    var idlst = e.currentTarget.getAttribute('idlst'); 
+    var sender = document.querySelector('#getCards');
+    sender.url = "https://cimat.cloud.tyk.io/avl/card/"+idlst+"?authorization=578417c2054dc0000100006aadmin";
+    sender.generateRequest();
+  };
+  
+  app.updateCards = function(request){
+    var resp = document.querySelector('#getCards').lastResponse;
+    var sender = document.querySelector('#newOrder');
+	  sender.body = JSON.stringify({"data":resp});
+	  sender.generateRequest();
+  };
+  
+  app.send = function(e){
+			var sender = document.querySelector('#newOrder');
+			sender.method= "PUT";
+			var token = e.target.token;
+			var left = e.target.left;
+			var right = e.target.right;
+			sender.url ="https://cimat.cloud.tyk.io/avl/order/"+token+"?authorization=578417c2054dc0000100006aadmin";
+			sender.body = JSON.stringify({"left":left,"right":right});
+			sender.generateRequest();
+		};
 })(document);

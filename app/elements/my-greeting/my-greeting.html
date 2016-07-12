@@ -24,10 +24,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
-    <h1 class="page-title" tabindex="-1">{{greeting}}</h1>
+    <h1 class="page-title" tabindex="-1">{{greeting}} by {{person}}</h1>
     <label for="greeting-input">Criteria:</label>
     <!-- Listens for "input" event and sets greeting to <input>.value -->
     <input id="greeting-input" value="{{greeting::input}}">
+    <label for="person-input">You:</label>
+    <input id="person-input" value="{{person::input}}">
   </template>
 
   <script>
@@ -40,7 +42,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         properties: {
           greeting: {
             type: String,
-            value: 'Welcome!',
+            value: 'Value',
+            notify: true
+          },
+          person: {
+            type: String,
+            value: 'Agus',
             notify: true
           }
         }
